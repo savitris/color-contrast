@@ -1,3 +1,9 @@
+console.log(`foreground ${process.argv[2]}`);
+console.log(`background ${process.argv[3]}`);
+
+const foreground = process.argv[2];
+const background = process.argv[3];
+
 const Color = require("color");
 
 function getContrastRatio(color1, color2) {
@@ -26,8 +32,8 @@ function findAccessibleTextColor(background, textColorOptions) {
 }
 
 // Example usage
-const backgroundColor = "#000"; // Replace with your background color
-const textColors = ["#fff", "#333", "#aabbcc"]; // Replace with your text color options
+const backgroundColor = background; // Replace with your background color
+const textColors = [foreground, "#333", "#aabbcc", "#fff"]; // Replace with your text color options
 
 const accessibleTextColor = findAccessibleTextColor(
   backgroundColor,
