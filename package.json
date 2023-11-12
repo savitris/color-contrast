@@ -1,0 +1,14 @@
+{
+  "name": "color-contrast",
+  "version": "1.0.0",
+  "description": "node script to check color contrast in themes and offer AA meeting shades",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "color": "^4.2.3"
+  }
+}
