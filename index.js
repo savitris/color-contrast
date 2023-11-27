@@ -1,5 +1,17 @@
 console.log(`foreground ${process.argv[2]}`);
 console.log(`background ${process.argv[3]}`);
+const themeTokens = require("@utrecht/design-tokens/dist/index.json");
+const themeColors = themeTokens
+  .filter((token) => {
+    return (
+      token["$extensions"] &&
+      token["$extensions"]["nl.nldesignsystem.css.property"] &&
+      token["$extensions"]["nl.nldesignsystem.css.property"]["syntax"] ===
+        "<color>"
+    );
+  })
+  .map((token) => token.value)
+  .filter(Boolean);
 
 const foreground = process.argv[2];
 const background = process.argv[3];
@@ -33,7 +45,7 @@ function findAccessibleTextColor(background, textColorOptions) {
 
 // Example usage
 const backgroundColor = background; // Replace with your background color
-const textColors = [foreground, "#333", "#aabbcc", "#fff"]; // Replace with your text color options
+const textColors = [foreground, ...themeColors]; // Replace with your text color options
 
 const accessibleTextColor = findAccessibleTextColor(
   backgroundColor,
