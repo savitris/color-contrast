@@ -4,7 +4,9 @@
   "description": "node script to check color contrast in themes and offer AA meeting shades",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js \"red\" \"blue\""
+    "test": "node index.js \"red\" \"blue\"",
+    "test-passing": "node index.js \"#91087F\" \"#9CC9E3\"",
+    "test-not-passing": "node index.js \"#91087F\" \"#90C1E0\""
   },
   "author": "",
   "license": "ISC",
