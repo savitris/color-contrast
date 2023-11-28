@@ -1,5 +1,5 @@
-console.log(`foreground ${process.argv[2]}`);
-console.log(`background ${process.argv[3]}`);
+console.log(`Foreground color: ${process.argv[2]}`);
+console.log(`Background color: ${process.argv[3]}`);
 const themeTokens = require("@utrecht/design-tokens/dist/index.json");
 const themeColors = themeTokens
   .filter((token) => {
@@ -13,7 +13,9 @@ const themeColors = themeTokens
   .map((token) => token.value)
   .filter(Boolean);
 
+//for testing purposes
 // console.log(themeColors);
+
 //this allows you to see all of the items of the array instead of just the first 100
 console.dir(themeColors, { maxArrayLength: null });
 
@@ -32,10 +34,10 @@ function getContrastRatio(color1, color2) {
   return (brighter + 0.05) / (darker + 0.05);
 }
 
-function findAccessibleTextColor(background, textColorOptions) {
+function findAccessibleTextColor(background, textColorsPalette) {
   const MIN_CONTRAST_RATIO = 4.5; // WCAG AA standard
 
-  for (const textColor of textColorOptions) {
+  for (const textColor of textColorsPalette) {
     const contrastRatio = getContrastRatio(textColor, background);
 
     if (contrastRatio >= MIN_CONTRAST_RATIO) {
@@ -43,29 +45,31 @@ function findAccessibleTextColor(background, textColorOptions) {
     }
   }
 
-  // If no suitable text color is found, you might want to handle this case accordingly
+  // If no suitable text color is found
   return null;
 }
 
 // Example usage
 const backgroundColor = background; // Replace with your background color
-const textColors = [foreground, ...themeColors]; // Replace with your text color options
+const textColorsPalette = [foreground, ...themeColors]; // Replace with your text color options
 
 const accessibleTextColor = findAccessibleTextColor(
   backgroundColor,
-  textColors
+  textColorsPalette
 );
 
 if (accessibleTextColor) {
   if (accessibleTextColor == foreground) {
     console.log(
-      `The foreground color given meets the minimum contrast criteria determined by WCAG: ${accessibleTextColor}`
+      `The text color given, ${accessibleTextColor}, meets the minimum contrast criteria determined by WCAG AA: `
     );
   } else {
     console.log(
-      `The foreground color given does not meet the minimum color contrast WCAG standard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor}`
+      `The text color given does not meet the minimum color contrast WCAG AAstandard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor}`
     );
   }
 } else {
-  console.log("No accessible text color found.");
+  console.log(
+    "The given foreground text color and background color combination is not accessible. No alternative accessible text color found in the design tokens that would meet the WCAG AA color contrast standard with the given background color ."
+  );
 }
