@@ -13,6 +13,10 @@ const themeColors = themeTokens
   .map((token) => token.value)
   .filter(Boolean);
 
+// console.log(themeColors);
+//this allows you to see all of the items of the array instead of just the first 100
+console.dir(themeColors, { maxArrayLength: null });
+
 const foreground = process.argv[2];
 const background = process.argv[3];
 
@@ -53,7 +57,15 @@ const accessibleTextColor = findAccessibleTextColor(
 );
 
 if (accessibleTextColor) {
-  console.log(`Accessible text color: ${accessibleTextColor}`);
+  if (accessibleTextColor == foreground) {
+    console.log(
+      `The foreground color given meets the minimum contrast criteria determined by WCAG: ${accessibleTextColor}`
+    );
+  } else {
+    console.log(
+      `The foreground color given does not meet the minimum color contrast WCAG standard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor}`
+    );
+  }
 } else {
   console.log("No accessible text color found.");
 }
