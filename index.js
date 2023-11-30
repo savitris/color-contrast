@@ -10,14 +10,26 @@ const themeColors = themeTokens
         "<color>"
     );
   })
-  .map((token) => token.value)
+  .map((token) => ({
+    // we've beefed up each 'token' in the themeColors array now:
+    value: token.value,
+    comment: token.comment,
+    originalvalue: token.original.value,
+  }))
   .filter(Boolean);
+
+// let's see what the first item in the themeColors array looks like now:
+console.log(themeColors[0]);
+
+// console.log("value of first token is " + themeColors[105].value);
+// console.log("comment is " + themeColors[105].comment);
+// console.log("original value is " + themeColors[105].originalvalue);
 
 //for testing purposes
 // console.log(themeColors);
 
 //this allows you to see all of the items of the array instead of just the first 100
-console.dir(themeColors, { maxArrayLength: null });
+// console.dir(themeColors, { maxArrayLength: null });
 
 const foreground = process.argv[2];
 const background = process.argv[3];
@@ -37,11 +49,11 @@ function getContrastRatio(color1, color2) {
 function findAccessibleTextColor(background, textColorsPalette) {
   const MIN_CONTRAST_RATIO = 4.5; // WCAG AA standard
 
-  for (const textColor of textColorsPalette) {
-    const contrastRatio = getContrastRatio(textColor, background);
+  for (const i of textColorsPalette) {
+    const contrastRatio = getContrastRatio(i.value, background);
 
     if (contrastRatio >= MIN_CONTRAST_RATIO) {
-      return textColor;
+      return i;
     }
   }
 
@@ -49,23 +61,33 @@ function findAccessibleTextColor(background, textColorsPalette) {
   return null;
 }
 
-// Example usage
+// themeColors temporarily gets flattened to just an array of strings that contain each token's (color) value.
 const backgroundColor = background; // Replace with your background color
-const textColorsPalette = [foreground, ...themeColors]; // Replace with your text color options
+const textColorsPalette = [
+  {
+    value: foreground,
+  },
+  // foreground,
+  ...themeColors,
+  // ...themeColors.map((token) => token.value),
+  // ...themeColors.map((token) => token.comment),
+];
 
+// console.log("the textColorsPalette is" + textColorsPalette);
 const accessibleTextColor = findAccessibleTextColor(
   backgroundColor,
   textColorsPalette
 );
 
 if (accessibleTextColor) {
-  if (accessibleTextColor == foreground) {
+  if (accessibleTextColor.value == foreground) {
     console.log(
-      `The text color given, ${accessibleTextColor}, meets the minimum contrast criteria determined by WCAG AA: `
+      `The text color given, ${accessibleTextColor.value}, meets the minimum contrast criteria determined by WCAG AA: `
     );
   } else {
     console.log(
-      `The text color given does not meet the minimum color contrast WCAG AAstandard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor}`
+      `The text color given does not meet the minimum color contrast WCAG AAstandard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor.value}. Its comment is ${accessibleTextColor.comment}`
+      // GET THE COMMENT SHOWING HERE FROM themeColors!!!
     );
   }
 } else {
