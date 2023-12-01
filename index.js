@@ -12,9 +12,11 @@ const themeColors = themeTokens
   })
   .map((token) => ({
     // we've beefed up each 'token' in the themeColors array now:
+    // added contrastratio. Should this be 0, null, or undefined?
     value: token.value,
     comment: token.comment,
     originalvalue: token.original.value,
+    contrastratio: 0,
   }))
   .filter(Boolean);
 
@@ -43,18 +45,31 @@ function getContrastRatio(color1, color2) {
   const brighter = Math.max(luminance1, luminance2);
   const darker = Math.min(luminance1, luminance2);
 
+  console.log(luminance1);
   return (brighter + 0.05) / (darker + 0.05);
 }
 
 function findAccessibleTextColor(background, textColorsPalette) {
   const MIN_CONTRAST_RATIO = 4.5; // WCAG AA standard
 
+  const goodContrastArray = [];
+
   for (const i of textColorsPalette) {
     const contrastRatio = getContrastRatio(i.value, background);
 
+    i.contrastratio = contrastRatio;
+
     if (contrastRatio >= MIN_CONTRAST_RATIO) {
-      return i;
+      goodContrastArray.push(i);
+      console.log(goodContrastArray);
     }
+
+    // if (contrastRatio >= MIN_CONTRAST_RATIO) {
+    //   // instead of returning, push i into the contrastedColors array
+    //   // save only those that meet the min contrast only
+    //   return i;
+    //   // ADD SAVING IN MEMORY THAT THIS HAS MIN CONTRAST BUT KEEP ON CHECKING THE OTHER VALUES IN THE ARRAY
+    // }
   }
 
   // If no suitable text color is found
@@ -63,6 +78,7 @@ function findAccessibleTextColor(background, textColorsPalette) {
 
 // themeColors temporarily gets flattened to just an array of strings that contain each token's (color) value.
 const backgroundColor = background; // Replace with your background color
+
 const textColorsPalette = [
   {
     value: foreground,
