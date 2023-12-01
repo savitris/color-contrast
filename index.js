@@ -21,7 +21,7 @@ const themeColors = themeTokens
   .filter(Boolean);
 
 // let's see what the first item in the themeColors array looks like now:
-console.log(themeColors[0]);
+// console.log(themeColors[0]);
 
 // console.log("value of first token is " + themeColors[105].value);
 // console.log("comment is " + themeColors[105].comment);
@@ -36,24 +36,30 @@ console.log(themeColors[0]);
 const foreground = process.argv[2];
 const background = process.argv[3];
 
+const colorString = require("color-string");
 const Color = require("color");
 
 function getContrastRatio(color1, color2) {
-  const luminance1 = Color(color1).luminosity();
-  const luminance2 = Color(color2).luminosity();
+  if (
+    colorString.get(color1) !== null
+    // typeof Color(color1).luminosity() === "number"
+    // typeof Color(color1) === "string"
+  ) {
+    // console.log("this is the color1 " + color1);
+    const luminance1 = Color(color1).luminosity();
+    const luminance2 = Color(color2).luminosity();
 
-  const brighter = Math.max(luminance1, luminance2);
-  const darker = Math.min(luminance1, luminance2);
+    const brighter = Math.max(luminance1, luminance2);
+    const darker = Math.min(luminance1, luminance2);
 
-  console.log(luminance1);
-  return (brighter + 0.05) / (darker + 0.05);
+    // console.log(luminance1);
+    return (brighter + 0.05) / (darker + 0.05);
+  }
 }
 
 function findAccessibleTextColor(background, textColorsPalette) {
   const MIN_CONTRAST_RATIO = 4.5; // WCAG AA standard
-
   const goodContrastArray = [];
-
   for (const i of textColorsPalette) {
     const contrastRatio = getContrastRatio(i.value, background);
 
@@ -61,7 +67,6 @@ function findAccessibleTextColor(background, textColorsPalette) {
 
     if (contrastRatio >= MIN_CONTRAST_RATIO) {
       goodContrastArray.push(i);
-      console.log(goodContrastArray);
     }
 
     // if (contrastRatio >= MIN_CONTRAST_RATIO) {
@@ -70,6 +75,10 @@ function findAccessibleTextColor(background, textColorsPalette) {
     //   return i;
     //   // ADD SAVING IN MEMORY THAT THIS HAS MIN CONTRAST BUT KEEP ON CHECKING THE OTHER VALUES IN THE ARRAY
     // }
+  }
+  if (goodContrastArray.length > 0) {
+    // console.log(goodContrastArray[0]);
+    return goodContrastArray;
   }
 
   // If no suitable text color is found
@@ -96,15 +105,24 @@ const accessibleTextColor = findAccessibleTextColor(
 );
 
 if (accessibleTextColor) {
-  if (accessibleTextColor.value == foreground) {
+  // console.log(accessibleTextColor);
+  if (accessibleTextColor[0].value == foreground) {
     console.log(
-      `The text color given, ${accessibleTextColor.value}, meets the minimum contrast criteria determined by WCAG AA: `
+      `The text color given, ${accessibleTextColor[0].value}, meets the minimum contrast criteria determined by WCAG AA: 4.5:1`
     );
   } else {
     console.log(
-      `The text color given does not meet the minimum color contrast WCAG AAstandard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor.value}. Its comment is ${accessibleTextColor.comment}`
-      // GET THE COMMENT SHOWING HERE FROM themeColors!!!
+      `The text color given does not meet the minimum color contrast WCAG AAstandard. The first color from the design tokens pallette that meets this standard is: ${accessibleTextColor[0].value}. Its comment is ${accessibleTextColor[0].comment}`
     );
+
+    // To do: sort the array "AccessibleTextColor" by each items contrastratio value, so you can sort them from best. Or get the top 3
+    // google "sort array of objects javascript" <-- !!!
+    // possibly remove duplicates from the array too.
+    console.log("These are accessible: ");
+    for (const i of accessibleTextColor) {
+      console.table(i);
+      // console.log(i.value);
+    }
   }
 } else {
   console.log(
