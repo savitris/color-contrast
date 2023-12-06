@@ -78,7 +78,13 @@ function findAccessibleTextColor(background, textColorsPalette) {
   }
   if (goodContrastArray.length > 0) {
     // console.log(goodContrastArray[0]);
-    return goodContrastArray;
+
+    // USE THE COMPARE FUNCTION TO SORT THE ITEMS IN goodContrastArray BY BIGGEST TO SMALLEST contrastratio VALUE
+    // 1- HOW CAN I REACH THE INDIVIDUAL contrastratio VALUES FROM THE goodContrastArray ARRAY?
+    goodContrastArray.sort((a, b) => b.contrastratio - a.contrastratio);
+    // a lot of results are the same color, should we only get one "copy" of each color offered or be strict and offer literraly the best 3 matches even if they're the same color, all cause they have a different comment?
+
+    return goodContrastArray.slice(0, 3);
   }
 
   // If no suitable text color is found
