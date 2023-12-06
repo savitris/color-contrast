@@ -84,7 +84,14 @@ function findAccessibleTextColor(background, textColorsPalette) {
     goodContrastArray.sort((a, b) => b.contrastratio - a.contrastratio);
     // a lot of results are the same color, should we only get one "copy" of each color offered or be strict and offer literraly the best 3 matches even if they're the same color, all cause they have a different comment?
 
-    return goodContrastArray.slice(0, 3);
+    // original
+    // return goodContrastArray.slice(0, 3);
+
+    // #1 REMOVING DUPLICATE OBJECTS USING THE PROPERTY NAME
+    function uniqByKeepLast(data, key) {
+      return [...new Map(data.map((x) => [key(x), x])).values()].slice(0, 3);
+    }
+    return uniqByKeepLast(goodContrastArray, (it) => it.contrastratio);
   }
 
   // If no suitable text color is found
